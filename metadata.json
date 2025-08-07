@@ -1,0 +1,5 @@
+{
+  "name": "University FAQ Chatbot",
+  "description": "A responsive and intelligent chatbot designed to answer prospective students' questions about a university. It uses a Retrieval-Augmented Generation (RAG) approach on the frontend to provide accurate answers from a predefined knowledge base.",
+  "requestFramePermissions": []
+}
