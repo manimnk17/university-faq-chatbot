@@ -1,5 +1,6 @@
 {
-  "name": "University FAQ Chatbot",
-  "description": "A responsive and intelligent chatbot designed to answer prospective students' questions about a university. It uses a Retrieval-Augmented Generation (RAG) approach on the frontend to provide accurate answers from a predefined knowledge base.",
-  "requestFramePermissions": []
+  "name": "Embeddable Gemini Chat Widget",
+  "description": "A standalone, embeddable chat widget powered by the Gemini API. It can be configured with a knowledge base (RAG) and also perform live web searches. Ready to be integrated into any website.",
+  "requestFramePermissions": [],
+  "prompt": ""
 }
