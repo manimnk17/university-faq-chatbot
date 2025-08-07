@@ -15,13 +15,26 @@ const initializeChatWidget = () => {
         container.id = WIDGET_ROOT_ID;
         document.body.appendChild(container);
     }
+
     
-    const root = ReactDOM.createRoot(container);
-    root.render(
-      <React.StrictMode>
-        <App />
-      </React.StrictMode>
-    );
+    const hash = window.location.hash; // "#ecommerce-store"
+    const customerId = hash ? hash.substring(1).split('/')[0] : 'default'; // "ecommerce-store"
+
+//     const searchParams = new URLSearchParams(window.location.search);
+// const customerId = searchParams.get("customerId") || 'default';
+
+
+
+document.body.appendChild(container);
+
+const root = ReactDOM.createRoot(container);
+root.render(
+  <React.StrictMode>
+    <App customerId={customerId} />
+  </React.StrictMode>
+);
+    
+   
 };
 
 // Automatically initialize the widget when the script loads.

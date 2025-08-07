@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { ChatMessage, Sender } from '../types';
 import { getChatbotResponseStream, getGroundedResponse } from '../services/geminiService';
+import { getCustomerConfig } from '../data/customerData';
 import { UserIcon } from './icons/UserIcon';
 import { BotIcon } from './icons/BotIcon';
 import { SendIcon } from './icons/SendIcon';
@@ -10,7 +11,13 @@ import { XIcon } from './icons/XIcon';
 
 type SearchMode = 'faq' | 'web';
 
-export default function ChatInterface() {
+interface ChatInterfaceProps {
+    customerId: string | null;
+}
+
+export default function ChatInterface({ customerId }: ChatInterfaceProps) {
+    const config = getCustomerConfig(customerId);
+    
     const [messages, setMessages] = useState<ChatMessage[]>([]);
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -26,14 +33,16 @@ export default function ChatInterface() {
     }, [messages]);
     
     useEffect(() => {
+        // This effect runs when the config changes (i.e., customerId changes)
+        // It resets the chat with a customer-specific welcome message.
         setMessages([
             {
                 id: 'initial-bot-message',
                 sender: Sender.Bot,
-                text: `Hello! I'm the University AI Assistant. How can I help you today? You can ask me about our FAQ or switch to a web search for recent news.`
+                text: `Hello! I'm the ${config.name}. How can I help you today? You can ask me about our FAQ or switch to a web search for recent news.`
             }
         ]);
-    }, []);
+    }, [config]);
 
     const handleSendMessage = useCallback(async () => {
         const trimmedInput = input.trim();
@@ -57,7 +66,8 @@ export default function ChatInterface() {
                         parts: [{ text: m.text }]
                     }));
                 
-                const stream = await getChatbotResponseStream(trimmedInput, chatHistory);
+                // Pass the customerId to the service
+                const stream = await getChatbotResponseStream(trimmedInput, chatHistory, customerId);
                 
                 let accumulatedText = '';
                 for await (const chunk of stream) {
@@ -81,12 +91,12 @@ export default function ChatInterface() {
         } finally {
             setIsLoading(false);
         }
-    }, [input, isLoading, messages, searchMode]);
+    }, [input, isLoading, messages, searchMode, customerId, config]);
 
     const handleToggleSearchMode = () => {
         const newMode = searchMode === 'faq' ? 'web' : 'faq';
         setSearchMode(newMode);
-        const modeText = newMode === 'web' ? 'Web Search Activated: I will now search the web for recent information.' : 'FAQ Mode Activated: I will answer based on the university knowledge base.';
+        const modeText = newMode === 'web' ? 'Web Search Activated: I will now search the web for recent information.' : 'FAQ Mode Activated: I will answer based on our knowledge base.';
         
         setMessages(prev => [...prev, {
             id: `mode-switch-${Date.now()}`,
@@ -94,12 +104,6 @@ export default function ChatInterface() {
             text: modeText,
         }]);
     };
-    
-    const exampleQuestions = [
-        "How do I apply for financial aid?",
-        "What is the student-to-faculty ratio?",
-        "Tell me about on-campus housing.",
-    ];
     
     return (
         <div className="flex flex-col h-full bg-white dark:bg-gray-800 overflow-hidden">
@@ -109,8 +113,8 @@ export default function ChatInterface() {
                         <BotIcon className="w-6 h-6 text-indigo-500 dark:text-indigo-400" />
                     </div>
                     <div>
-                        <h1 className="text-lg font-bold text-gray-800 dark:text-gray-100">University Assistant</h1>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">Your AI-powered guide</p>
+                        <h1 className="text-lg font-bold text-gray-800 dark:text-gray-100">{config.name}</h1>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">{config.tagline}</p>
                     </div>
                 </div>
             </header>
@@ -126,7 +130,7 @@ export default function ChatInterface() {
                      <div className="text-center py-8">
                         <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-4">Or try an example question:</h3>
                         <div className="flex flex-wrap justify-center gap-2">
-                            {exampleQuestions.map((q, i) => (
+                            {config.exampleQuestions.map((q, i) => (
                                 <button key={i} onClick={() => setInput(q)} className="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 px-4 py-2 rounded-full text-sm hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
                                     {q}
                                 </button>
@@ -153,7 +157,7 @@ export default function ChatInterface() {
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
-                        placeholder={searchMode === 'faq' ? "Ask about admissions, tuition, etc." : "Search the web for university news..."}
+                        placeholder={searchMode === 'faq' ? config.placeholder : "Search the web for recent news..."}
                         className="w-full pl-14 pr-24 py-3 text-gray-800 dark:text-gray-100 bg-gray-100 dark:bg-gray-700 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400"
                         disabled={isLoading}
                     />

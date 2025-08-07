@@ -3,7 +3,11 @@ import ChatInterface from './ChatInterface';
 import { BotIcon } from './icons/BotIcon';
 import { XIcon } from './icons/XIcon';
 
-const ChatWidget: React.FC = () => {
+interface ChatWidgetProps {
+    customerId: string | null;
+}
+
+const ChatWidget: React.FC<ChatWidgetProps> = ({ customerId }) => {
     const [isOpen, setIsOpen] = useState(false);
 
     const toggleChat = () => setIsOpen(!isOpen);
@@ -28,7 +32,7 @@ const ChatWidget: React.FC = () => {
             <div 
                 className={`w-[calc(100vw-40px)] sm:w-[400px] h-[70vh] max-h-[600px] bg-white dark:bg-gray-800 rounded-2xl shadow-2xl flex flex-col transition-all duration-300 ease-in-out transform origin-bottom-right ${isOpen ? 'scale-100 opacity-100' : 'scale-90 opacity-0 pointer-events-none'}`}
             >
-               <ChatInterface />
+               <ChatInterface customerId={customerId} />
             </div>
 
             {/* Chat Bubble / Toggle Button */}

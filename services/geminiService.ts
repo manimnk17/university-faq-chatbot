@@ -1,5 +1,5 @@
 import { GoogleGenAI, GenerateContentResponse } from "@google/genai";
-import { faqData, FAQ } from '../data/faqData';
+import { getCustomerConfig, FAQ } from '../data/customerData';
 
 if (!process.env.API_KEY) {
     throw new Error("API_KEY environment variable is not set.");
@@ -17,21 +17,19 @@ const formatFAQData = (data: FAQ[]): string => {
     }).join('\n\n');
 };
 
-const faqKnowledgeBase = formatFAQData(faqData);
-
-const systemInstruction = `You are a friendly and helpful university admissions chatbot.
-Your goal is to answer user questions based ONLY on the provided Frequently Asked Questions (FAQ) list.
-Do not use any external knowledge.
-If a source URL is provided with an answer, you MUST cite it.
-If the answer to the question is not found in the FAQ list, you must politely state that you don't have the information and suggest they contact the admissions office directly for the most accurate information.
-Do not make up answers or URLs.`;
-
-export const getChatbotResponseStream = async (userQuestion: string, chatHistory: { role: string, parts: { text: string }[] }[]) => {
+export const getChatbotResponseStream = async (
+    userQuestion: string, 
+    chatHistory: { role: string, parts: { text: string }[] }[],
+    customerId: string | null
+) => {
     try {
+        const config = getCustomerConfig(customerId);
+        const faqKnowledgeBase = formatFAQData(config.faqData);
+
         const chat = ai.chats.create({
             model: 'gemini-2.5-flash',
             config: {
-                systemInstruction: `${systemInstruction}\n\nHere is the FAQ list:\n${faqKnowledgeBase}`,
+                systemInstruction: `${config.systemInstruction}\n\nHere is the FAQ list:\n${faqKnowledgeBase}`,
             },
             history: chatHistory,
         });

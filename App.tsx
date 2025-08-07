@@ -1,15 +1,17 @@
 import React from 'react';
 import ChatWidget from './components/ChatWidget';
 
+interface AppProps {
+  customerId: string | null;
+}
+
 /**
  * The main App component now solely renders the ChatWidget.
- * This refactoring turns the project into a focused, embeddable chat widget
- * application, removing the previous example host-page content. The ChatWidget
- * is completely self-contained and handles its own UI and state.
+ * It passes the customerId down to the widget to allow for dynamic configuration.
  */
-const App: React.FC = () => {
+const App: React.FC<AppProps> = ({ customerId }) => {
   return (
-    <ChatWidget />
+    <ChatWidget customerId={customerId} />
   );
 };
 
