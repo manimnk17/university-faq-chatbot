@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { ChatMessage, Sender } from '../types';
 import { getChatbotResponseStream, getGroundedResponse } from '../services/geminiService';
@@ -17,7 +18,8 @@ interface ChatInterfaceProps {
 
 export default function ChatInterface({ customerId }: ChatInterfaceProps) {
     const config = getCustomerConfig(customerId);
-    
+    const LogoComponent = config.logo;
+
     const [messages, setMessages] = useState<ChatMessage[]>([]);
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -91,7 +93,7 @@ export default function ChatInterface({ customerId }: ChatInterfaceProps) {
         } finally {
             setIsLoading(false);
         }
-    }, [input, isLoading, messages, searchMode, customerId, config]);
+    }, [input, isLoading, messages, searchMode, customerId]);
 
     const handleToggleSearchMode = () => {
         const newMode = searchMode === 'faq' ? 'web' : 'faq';
@@ -109,8 +111,8 @@ export default function ChatInterface({ customerId }: ChatInterfaceProps) {
         <div className="flex flex-col h-full bg-white dark:bg-gray-800 overflow-hidden">
             <header className="flex-shrink-0 bg-white dark:bg-gray-800/50 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700 p-4 shadow-sm">
                 <div className="flex items-center space-x-3">
-                    <div className="bg-indigo-100 dark:bg-indigo-900 p-2 rounded-full">
-                        <BotIcon className="w-6 h-6 text-indigo-500 dark:text-indigo-400" />
+                    <div className={`p-2 rounded-full ${config.theme.iconBg} ${config.theme.dark.iconBg}`}>
+                        <LogoComponent className={`w-6 h-6 ${config.theme.iconFill} ${config.theme.dark.iconFill}`} />
                     </div>
                     <div>
                         <h1 className="text-lg font-bold text-gray-800 dark:text-gray-100">{config.name}</h1>
@@ -122,7 +124,7 @@ export default function ChatInterface({ customerId }: ChatInterfaceProps) {
             <div id="chat-window" className="flex-1 p-6 overflow-y-auto custom-scrollbar">
                 <div className="space-y-6">
                     {messages.map((msg) => (
-                        <Message key={msg.id} message={msg} isLoading={isLoading && msg.sender === Sender.Bot && msg.text === ''} />
+                        <Message key={msg.id} message={msg} isLoading={isLoading && msg.sender === Sender.Bot && msg.text === ''} theme={config.theme} />
                     ))}
                     <div ref={chatEndRef} />
                 </div>
@@ -148,7 +150,7 @@ export default function ChatInterface({ customerId }: ChatInterfaceProps) {
                         className="absolute left-3 top-1/2 -translate-y-1/2 p-2 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
                     >
                         {searchMode === 'faq' ? 
-                            <BotIcon className="w-5 h-5 text-indigo-500 dark:text-indigo-400" /> : 
+                            <BotIcon className={`w-5 h-5 ${config.theme.iconFill} ${config.theme.dark.iconFill}`} /> : 
                             <SearchIcon className="w-5 h-5 text-teal-500 dark:text-teal-400" />
                         }
                     </button>
@@ -158,7 +160,7 @@ export default function ChatInterface({ customerId }: ChatInterfaceProps) {
                         onChange={(e) => setInput(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
                         placeholder={searchMode === 'faq' ? config.placeholder : "Search the web for recent news..."}
-                        className="w-full pl-14 pr-24 py-3 text-gray-800 dark:text-gray-100 bg-gray-100 dark:bg-gray-700 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400"
+                        className={`w-full pl-14 pr-24 py-3 text-gray-800 dark:text-gray-100 bg-gray-100 dark:bg-gray-700 rounded-full focus:outline-none focus:ring-2 ${config.theme.ring}`}
                         disabled={isLoading}
                     />
                     {input && (
@@ -172,7 +174,7 @@ export default function ChatInterface({ customerId }: ChatInterfaceProps) {
                     <button
                         onClick={handleSendMessage}
                         disabled={isLoading || !input.trim()}
-                        className="absolute right-2 top-1/2 -translate-y-1/2 bg-indigo-600 text-white rounded-full p-3 disabled:bg-indigo-300 dark:disabled:bg-indigo-800 disabled:cursor-not-allowed hover:bg-indigo-700 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800"
+                        className={`absolute right-2 top-1/2 -translate-y-1/2 text-white rounded-full p-3 disabled:cursor-not-allowed transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-gray-800 ${config.theme.primary} ${config.theme.primaryHover} ${config.theme.primaryDisabled} ${config.theme.dark.primaryDisabled} ${config.theme.ring}`}
                     >
                         <SendIcon className="w-5 h-5"/>
                     </button>

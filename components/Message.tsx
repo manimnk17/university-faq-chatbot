@@ -1,46 +1,41 @@
-
 import React from 'react';
 import { ChatMessage, Sender } from '../types';
 import { UserIcon } from './icons/UserIcon';
 import { BotIcon } from './icons/BotIcon';
 import { SearchIcon } from './icons/SearchIcon';
+import { ThemeClasses } from '../data/customerData';
 
 interface MessageProps {
     message: ChatMessage;
     isLoading: boolean;
+    theme: ThemeClasses;
 }
 
-const TypingIndicator = () => (
+const TypingIndicator = ({ colorClass }: { colorClass: string }) => (
     <div className="flex items-center space-x-1 p-2">
-        <span className="w-2 h-2 bg-indigo-300 rounded-full animate-bounce [animation-delay:-0.3s]"></span>
-        <span className="w-2 h-2 bg-indigo-300 rounded-full animate-bounce [animation-delay:-0.15s]"></span>
-        <span className="w-2 h-2 bg-indigo-300 rounded-full animate-bounce"></span>
+        <span className={`w-2 h-2 ${colorClass} rounded-full animate-bounce [animation-delay:-0.3s]`}></span>
+        <span className={`w-2 h-2 ${colorClass} rounded-full animate-bounce [animation-delay:-0.15s]`}></span>
+        <span className={`w-2 h-2 ${colorClass} rounded-full animate-bounce`}></span>
     </div>
 );
 
-export const Message: React.FC<MessageProps> = ({ message, isLoading }) => {
+export const Message: React.FC<MessageProps> = ({ message, isLoading, theme }) => {
     const isUser = message.sender === Sender.User;
-
-    const formattedText = message.text
-        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-        .replace(/\*(.*?)\*/g, '<em>$1</em>')
-        .split('\n')
-        .map((line, index) => <p key={index}>{line}</p>);
 
     return (
         <div className={`flex items-start gap-4 ${isUser ? 'justify-end' : 'justify-start'}`}>
             {!isUser && (
-                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center">
-                    <BotIcon className="w-6 h-6 text-indigo-500 dark:text-indigo-400" />
+                <div className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${theme.iconBg} ${theme.dark.iconBg}`}>
+                    <BotIcon className={`w-6 h-6 ${theme.iconFill} ${theme.dark.iconFill}`} />
                 </div>
             )}
             <div className={`max-w-xl p-4 rounded-2xl ${
                 isUser 
-                    ? 'bg-indigo-600 text-white rounded-br-lg' 
+                    ? `${theme.primary} ${theme.textOnPrimary} rounded-br-lg` 
                     : 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-100 rounded-bl-lg'
             }`}>
                 {isLoading ? (
-                    <TypingIndicator />
+                    <TypingIndicator colorClass={theme.typingIndicator} />
                 ) : (
                     <div className="prose prose-sm dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: message.text.replace(/\n/g, '<br />') }} />
                 )}
@@ -57,7 +52,7 @@ export const Message: React.FC<MessageProps> = ({ message, isLoading }) => {
                                         href={source.url} 
                                         target="_blank" 
                                         rel="noopener noreferrer" 
-                                        className="text-indigo-500 dark:text-indigo-400 hover:underline"
+                                        className={`hover:underline ${theme.iconFill} ${theme.dark.iconFill}`}
                                         title={source.title}
                                     >
                                         {source.title}

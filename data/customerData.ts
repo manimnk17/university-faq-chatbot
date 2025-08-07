@@ -1,8 +1,32 @@
+
+import React from 'react';
+import { UniversityLogo } from '../components/logos/UniversityLogo';
+import { SaasLogo } from '../components/logos/SaasLogo';
+import { EcommerceLogo } from '../components/logos/EcommerceLogo';
+
 export interface FAQ {
     question: string;
     answer: string;
     source_url?: string;
 }
+
+export interface ThemeClasses {
+    primary: string;
+    primaryHover: string;
+    primaryDisabled: string;
+    textOnPrimary: string;
+    ring: string;
+    iconFill: string;
+    iconBg: string;
+    typingIndicator: string;
+    font: string;
+    dark: {
+        primaryDisabled: string;
+        iconFill: string;
+        iconBg: string;
+    };
+}
+
 
 export interface CustomerConfig {
     id: string;
@@ -12,13 +36,67 @@ export interface CustomerConfig {
     exampleQuestions: string[];
     systemInstruction: string;
     faqData: FAQ[];
+    theme: ThemeClasses;
+    logo: React.FC<React.SVGProps<SVGSVGElement>>;
 }
+
+const universityTheme: ThemeClasses = {
+    primary: 'bg-blue-600',
+    primaryHover: 'hover:bg-blue-700',
+    primaryDisabled: 'disabled:bg-blue-300',
+    textOnPrimary: 'text-white',
+    ring: 'focus:ring-blue-500 dark:focus:ring-blue-400',
+    iconFill: 'text-blue-500',
+    iconBg: 'bg-blue-100',
+    typingIndicator: 'bg-blue-300',
+    font: 'font-serif',
+    dark: {
+        primaryDisabled: 'dark:disabled:bg-blue-800',
+        iconFill: 'dark:text-blue-400',
+        iconBg: 'dark:bg-blue-900',
+    },
+};
+
+const saasTheme: ThemeClasses = {
+    primary: 'bg-green-600',
+    primaryHover: 'hover:bg-green-700',
+    primaryDisabled: 'disabled:bg-green-300',
+    textOnPrimary: 'text-white',
+    ring: 'focus:ring-green-500 dark:focus:ring-green-400',
+    iconFill: 'text-green-500',
+    iconBg: 'bg-green-100',
+    typingIndicator: 'bg-green-300',
+    font: 'font-sans',
+    dark: {
+        primaryDisabled: 'dark:disabled:bg-green-800',
+        iconFill: 'dark:text-green-400',
+        iconBg: 'dark:bg-green-900',
+    },
+};
+
+const ecommerceTheme: ThemeClasses = {
+    primary: 'bg-teal-600',
+    primaryHover: 'hover:bg-teal-700',
+    primaryDisabled: 'disabled:bg-teal-300',
+    textOnPrimary: 'text-white',
+    ring: 'focus:ring-teal-500 dark:focus:ring-teal-400',
+    iconFill: 'text-teal-500',
+    iconBg: 'bg-teal-100',
+    typingIndicator: 'bg-teal-300',
+    font: 'font-sans',
+    dark: {
+        primaryDisabled: 'dark:disabled:bg-teal-800',
+        iconFill: 'dark:text-teal-400',
+        iconBg: 'dark:bg-teal-900',
+    },
+};
 
 const universityConfig: CustomerConfig = {
     id: 'university',
     name: 'University Assistant',
     tagline: 'Your AI-powered guide',
     placeholder: 'Ask about admissions, tuition, etc.',
+    logo: UniversityLogo,
     exampleQuestions: [
         "How do I apply for financial aid?",
         "What is the student-to-faculty ratio?",
@@ -50,7 +128,8 @@ const universityConfig: CustomerConfig = {
             question: "What is the student-to-faculty ratio?",
             answer: "Our student-to-faculty ratio is 14:1, which allows for personalized attention and small class sizes. Over 60% of our classes have fewer than 20 students."
         },
-    ]
+    ],
+    theme: universityTheme,
 };
 
 const saasConfig: CustomerConfig = {
@@ -58,6 +137,7 @@ const saasConfig: CustomerConfig = {
     name: 'InnovateSaaS Support',
     tagline: 'Your product specialist',
     placeholder: 'Ask about billing, accounts, etc.',
+    logo: SaasLogo,
     exampleQuestions: [
         "How do I reset my password?",
         "What are your pricing plans?",
@@ -78,7 +158,8 @@ const saasConfig: CustomerConfig = {
             question: "How do I upgrade my account?",
             answer: "You can upgrade your account at any time from your account dashboard. Navigate to the 'Billing' section and select 'Change Plan'."
         },
-    ]
+    ],
+    theme: saasTheme,
 };
 
 const ecommerceConfig: CustomerConfig = {
@@ -86,6 +167,7 @@ const ecommerceConfig: CustomerConfig = {
     name: 'GadgetGrove Help',
     tagline: 'Your friendly shopping assistant',
     placeholder: 'Ask about orders, shipping...',
+    logo: EcommerceLogo,
     exampleQuestions: [
         "What is your return policy?",
         "How do I track my order?",
@@ -106,7 +188,8 @@ const ecommerceConfig: CustomerConfig = {
             question: "Do you ship internationally?",
             answer: "Yes, we ship to most countries worldwide! Shipping costs and times vary by destination and will be calculated at checkout. Please note that customers are responsible for any customs fees or import duties."
         },
-    ]
+    ],
+    theme: ecommerceTheme,
 };
 
 
